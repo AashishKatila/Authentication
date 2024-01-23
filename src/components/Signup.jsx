@@ -1,96 +1,128 @@
 import React, { useState } from "react";
 import { useFormik } from "formik";
 
+const validate = (values) => {
+  const errors = {};
 
+  if (!values.firstName) {
+    errors.firstName = "Required";
+  } else if (values.firstName.length > 15) {
+    errors.firstName = "Must be 15 characters or less";
+  }
+
+  if (!values.lastName) {
+    errors.lastName = "Required";
+  } else if (values.lastName.length > 20) {
+    errors.lastName = "Must be 20 characters or less";
+  }
+
+  if (!values.email) {
+    errors.email = "Required";
+  } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.email)) {
+    errors.email = "Invalid email address";
+  }
+
+  return errors;
+};
 
 const Signup = () => {
-
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [registered, setRegistered] = useState(false);
-  const [error, setError] = useState('');
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    try {
-      const response = await fetch('https://rest-api-bjno.onrender.com/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          firstName,
-          lastName,
-          email,
-          password,
-        }),
-      });
-
-      if (response.ok) {
-        setRegistered(true);
-      } else {
-        const errorJson = await response.json();
-        setError(errorJson.message || 'Registration failed!');
+  const[registered,setRegistered] = useState(false)
+  const formik = useFormik({
+    initialValues: {
+      firstName: "",
+      lastName: "",
+      email: "",
+      password: "",
+    },
+    validate,
+    onSubmit: async (values) => {
+      try {
+        const response = await fetch(
+          "https://rest-api-bjno.onrender.com/register",
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(values), // Send all form values
+          }
+        );
+        if (response.ok) {
+          setRegistered(true);
+        } else {
+          const errorJson = await response.json();
+          setError(errorJson.message || "Registration failed!");
+        }
+      } catch (error) {
+        setError("Something went wrong! Please try again later.");
       }
-    } catch (error) {
-      setError('Something went wrong! Please try again later.');
-    }
-  };
+    },
+  });
 
   return (
-    <form onSubmit={handleSubmit} className='flex flex-col px-20  pt-4 pb-4 '>
-      <label htmlFor="firstName">First Name:</label>
+    <form onSubmit={formik.handleSubmit} className="flex flex-col px-20 pt-4 pb-4 text-black  ">
+      <label htmlFor="firstName" >First Name:</label>
+
       <input
         type="text"
         id="firstName"
         name="firstName"
-        value={firstName}
-        onChange={(e) => setFirstName(e.target.value)}
-        required
-        className='text-black px-2'
+        className="px-2"
+        {...formik.getFieldProps("firstName")}
       />
-      <br />
-      <label htmlFor="lastName">Last Name:</label>
-      <input
-        type="text"
-        id="lastName"
-        name="lastName"
-        value={lastName}
-        onChange={(e) => setLastName(e.target.value)}
-        required
-        className='text-black px-2'
-      />
-      <br />
+      {formik.touched.firstName && formik.errors.firstName && (
+        <div className="error">{formik.errors.firstName}</div>
+      )}
 
-      <label htmlFor="email">Email:</label>
-      <input
-        type="email"
-        id="email"
-        name="email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        required
-        className='text-black px-2'
-      />
+
+      <br />
+     
+       <label htmlFor="lastName" >Last Name:</label>
+
+<input
+  type="text"
+  id="lastName"
+  name="lastName"
+  className="px-2"x
+  {...formik.getFieldProps("lastName")}
+/>
+{formik.touched.lastName && formik.errors.lastName && (
+  <div className="error">{formik.errors.lastName}</div>
+)}
       <br />
 
-      <label htmlFor="password">Password:</label>
-      <input
-        type="password"
-        id="password"
-        name="password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        required
-        className='text-black px-2'
-      />
+
+       <label htmlFor="email" >Email:</label>
+
+<input
+  type="email"
+  id="email"
+  className="px-2"
+  name="email"
+  {...formik.getFieldProps("email")}
+/>
+{formik.touched.email && formik.errors.email && (
+  <div className="error">{formik.errors.email}</div>
+)}
       <br />
 
-      <button type="submit" className='bg-[#5C5470] text-xl px-4 py-1 text-white rounded-xl mt-2'>Register</button>
+       <label htmlFor="password">Password:</label>
 
-      {registered && <p>Congratulations! You have registered successfully.</p>}
-      {error && <p className="error">{error}</p>}
+<input
+  type="password"
+  id="password"
+  name="password"
+  className="px-2"
+  {...formik.getFieldProps("password")}
+/>
+{formik.touched.password && formik.errors.password && (
+  <div className="error">{formik.errors.password}</div>
+)}
+      <br />
+
+      <button type="submit" disabled={formik.isSubmitting}>
+        {formik.isSubmitting ? 'Registering...' : 'Register'}
+      </button>
+      {registered && <p>COngrats on successfull registration</p>}
+
     </form>
   );
 };

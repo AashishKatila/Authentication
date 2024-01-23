@@ -13,7 +13,7 @@ const Login = () => {
   if(value){
     loggedIn === true
   }
-  console.log(value)
+  // console.log(value)
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -23,7 +23,7 @@ const Login = () => {
       setUserData(data);
       for (const user of data) {
         if (user.email === email && user.password === password) {
-          console.log(user)
+          // console.log(user)
           localStorage.setItem("userId",user._id);
           break;
         }

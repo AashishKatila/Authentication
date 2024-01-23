@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import UserContext from "./context/userContext";
 
 const Profile = () => {
   const userId = localStorage.getItem("userId");
@@ -56,7 +57,8 @@ const Profile = () => {
       {isLoading && <p>Loading data...</p>}
       {error && <p>Error: {error.message}</p>}
       {alldata.length > 0 && (
-        <div>
+        <>
+            {/* {console.log(alldata)} */}
           {alldata.map(
             (item) =>
               item._id === userId && (
@@ -90,7 +92,7 @@ const Profile = () => {
                 </div>
               )
           )}
-        </div>
+        </>
       )}
 
     </div>

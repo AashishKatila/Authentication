@@ -1,6 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
+import { useFormik } from "formik";
+
+
 
 const Signup = () => {
+
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
@@ -35,7 +39,7 @@ const Signup = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} className='flex flex-col px-20  pt-4 pb-4 '>
       <label htmlFor="firstName">First Name:</label>
       <input
         type="text"
@@ -44,6 +48,7 @@ const Signup = () => {
         value={firstName}
         onChange={(e) => setFirstName(e.target.value)}
         required
+        className='text-black px-2'
       />
       <br />
       <label htmlFor="lastName">Last Name:</label>
@@ -54,6 +59,7 @@ const Signup = () => {
         value={lastName}
         onChange={(e) => setLastName(e.target.value)}
         required
+        className='text-black px-2'
       />
       <br />
 
@@ -65,6 +71,7 @@ const Signup = () => {
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         required
+        className='text-black px-2'
       />
       <br />
 
@@ -76,10 +83,11 @@ const Signup = () => {
         value={password}
         onChange={(e) => setPassword(e.target.value)}
         required
+        className='text-black px-2'
       />
       <br />
 
-      <button type="submit">Register</button>
+      <button type="submit" className='bg-[#5C5470] text-xl px-4 py-1 text-white rounded-xl mt-2'>Register</button>
 
       {registered && <p>Congratulations! You have registered successfully.</p>}
       {error && <p className="error">{error}</p>}

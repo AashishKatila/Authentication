@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import UserContext from "./context/userContext";
+import UserContext, { AuthContext } from "./context/userContext";
 
 const Profile = () => {
   const userId = localStorage.getItem("userId");
@@ -8,6 +8,10 @@ const Profile = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate()
+  
+  const {loggedIn,setLoggedIn} = useContext(AuthContext)
+  // console.log(values)
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -31,15 +35,15 @@ const Profile = () => {
   }, []);
 
   const handleDelete = (id ) => {
-    // console.log(id);
+    console.log(id);
     fetch(`https://rest-api-bjno.onrender.com/delete/${id}`, {
       method: "DELETE",
     })
       .then((resp) => resp.json())
       .then(() => {
-        setAlldata((values) => {
-          return values.filter((item) => item.id != id);
-        });
+        // setAlldata((values) => {
+        //   return values.filter((item) => item.id != id);
+        // });
         alert("User deleted");
         localStorage.removeItem("userId")
         navigate('/')
@@ -48,6 +52,7 @@ const Profile = () => {
 
   const Logout = () =>{
     localStorage.removeItem("userId")
+    setLoggedIn(false)
     navigate('/')
   }
 
@@ -60,9 +65,9 @@ const Profile = () => {
         <>
             {/* {console.log(alldata)} */}
           {alldata.map(
-            (item) =>
+            (item,index) =>
               item._id === userId && (
-                <div key={item.id}>
+                <div key={index}>
                   {/* Information  */}
                   <div>
                     <div>
@@ -96,6 +101,7 @@ const Profile = () => {
       )}
 
     </div>
+
   );
 };
 

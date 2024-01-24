@@ -1,23 +1,30 @@
-import React, { useState } from 'react'
-import { BrowserRouter ,Routes,Route  } from 'react-router-dom'
-import Login from './components/Login'
-import Signup from './components/Signup'
-import Navbar from './components/Navbar'
-import './App.css'
-import Profile from './components/Profile'
-
+import React, { useState, useEffect, useContext } from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Login from "./components/Login";
+import Signup from "./components/Signup";
+import Navbar from "./components/Navbar";
+import "./App.css";
+import Profile from "./components/Profile";
+import { AuthContext } from "./components/context/userContext";
 
 const App = () => {
-  return (
-    <BrowserRouter >
-    <Navbar/>
-      <Routes>
-      <Route exact path="/" element={<Login />} />
-      <Route path='/signup' element={<Signup />} />
-      <Route path='/profile' element={<Profile />} />
-      </Routes>
-    </BrowserRouter>
-  )
-}
+  const { loggedIn } = useContext(AuthContext);
+  // console.log(loggedIn);
 
-export default App
+  return (
+    <>
+      <Navbar />
+      <Routes>
+        <Route path="/signup" element={<Signup />} />
+        {loggedIn ? (
+          <Route path="/profile" element={<Profile />} />
+        ) : (
+          <Route exact path="*" element={<Login />} />
+         )}  
+         {/* Checks all the path whether it has recieved anything or not and if not then foes to the given path */}
+      </Routes>
+    </>
+  );
+};
+
+export default App;

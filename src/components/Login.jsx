@@ -1,19 +1,21 @@
-import React,{useState} from "react";
+import React,{useContext, useState} from "react";
 import { Link, useNavigate } from "react-router-dom";
+import UserContext,{AuthContext} from "./context/userContext";
+import CustomInput from "./CustomInput";
+import {AiOutlineMail} from 'react-icons/ai'
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [userData, setUserData] = useState({});
-  const [loggedIn, setLoggedIn] = useState(false);
+
+  const {loggedIn,setLoggedIn} = useContext(AuthContext)
+  // console.log(values)
 
   const navigate = useNavigate()
 
   const value = localStorage.getItem("userId")
-  if(value){
-    loggedIn === true
-  }
-  // console.log(value)
+
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -25,6 +27,7 @@ const Login = () => {
         if (user.email === email && user.password === password) {
           // console.log(user)
           localStorage.setItem("userId",user._id);
+          setLoggedIn(true)
           break;
         }
       }
@@ -44,8 +47,12 @@ const Login = () => {
         onChange={(e) => setEmail(e.target.value)}
         className="text-black px-2"
       />
+      {/* <CustomInput type={'text'} placeholder={'Enter your email'} /> */}
+
       <br/>
       <label htmlFor="" className="text-xl mr-5 mb-4">Password</label>
+      {/* <CustomInput  type={'password'} placeholder={'Enter your password'} /> */}
+
       <input
         type="password"
         placeholder="Password"

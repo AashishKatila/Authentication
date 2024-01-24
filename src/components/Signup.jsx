@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useFormik } from "formik";
+import CustomInput from "./CustomInput";
 
 const validate = (values) => {
   const errors = {};
@@ -26,7 +27,7 @@ const validate = (values) => {
 };
 
 const Signup = () => {
-  const[registered,setRegistered] = useState(false)
+  const [registered, setRegistered] = useState(false);
   const formik = useFormik({
     initialValues: {
       firstName: "",
@@ -58,8 +59,11 @@ const Signup = () => {
   });
 
   return (
-    <form onSubmit={formik.handleSubmit} className="flex flex-col px-20 pt-4 pb-4 text-black  ">
-      <label htmlFor="firstName" >First Name:</label>
+    <form
+      onSubmit={formik.handleSubmit}
+      className="flex flex-col px-20 pt-4 pb-4 text-black  "
+    >
+      <label htmlFor="firstName">First Name:</label>
 
       <input
         type="text"
@@ -68,61 +72,64 @@ const Signup = () => {
         className="px-2"
         {...formik.getFieldProps("firstName")}
       />
+      {/* <CustomInput
+        type={"text"}
+        placeholder={"Firstname"}
+        {...formik.getFieldProps("firstname")}
+      /> */}
+
       {formik.touched.firstName && formik.errors.firstName && (
         <div className="error">{formik.errors.firstName}</div>
       )}
 
-
-      <br />
-     
-       <label htmlFor="lastName" >Last Name:</label>
-
-<input
-  type="text"
-  id="lastName"
-  name="lastName"
-  className="px-2"x
-  {...formik.getFieldProps("lastName")}
-/>
-{formik.touched.lastName && formik.errors.lastName && (
-  <div className="error">{formik.errors.lastName}</div>
-)}
       <br />
 
+      <label htmlFor="lastName">Last Name:</label>
 
-       <label htmlFor="email" >Email:</label>
-
-<input
-  type="email"
-  id="email"
-  className="px-2"
-  name="email"
-  {...formik.getFieldProps("email")}
-/>
-{formik.touched.email && formik.errors.email && (
-  <div className="error">{formik.errors.email}</div>
-)}
+      <input
+        type="text"
+        id="lastName"
+        name="lastName"
+        className="px-2"
+        {...formik.getFieldProps("lastName")}
+      />
+      {formik.touched.lastName && formik.errors.lastName && (
+        <div className="error">{formik.errors.lastName}</div>
+      )}
       <br />
 
-       <label htmlFor="password">Password:</label>
+      <label htmlFor="email">Email:</label>
 
-<input
-  type="password"
-  id="password"
-  name="password"
-  className="px-2"
-  {...formik.getFieldProps("password")}
-/>
-{formik.touched.password && formik.errors.password && (
-  <div className="error">{formik.errors.password}</div>
-)}
+      <input
+        type="email"
+        id="email"
+        className="px-2"
+        name="email"
+        {...formik.getFieldProps("email")}
+      />
+      {formik.touched.email && formik.errors.email && (
+        <div className="error">{formik.errors.email}</div>
+      )}
       <br />
 
-      <button type="submit" disabled={formik.isSubmitting}>
-        {formik.isSubmitting ? 'Registering...' : 'Register'}
+      <label htmlFor="password">Password:</label>
+
+      <input
+        type="password"
+        id="password"
+        name="password"
+        className="px-2"
+        {...formik.getFieldProps("password")}
+      />
+      {formik.touched.password && formik.errors.password && (
+        <div className="error">{formik.errors.password}</div>
+      )}
+      <br />
+
+      <button className="text-white" type="submit" disabled={formik.isSubmitting}>
+        {formik.isSubmitting ? "Registering..." : "Register"}
       </button>
       {registered && <p>COngrats on successfull registration</p>}
-
     </form>
   );
 };

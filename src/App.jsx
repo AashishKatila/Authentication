@@ -21,10 +21,11 @@ const App = () => {
         ) : (
           <Route exact path="*" element={<Login />} />
          )}  
-         {/* Checks all the path whether it has recieved anything or not and if not then foes to the given path */}
+         {/*   '*' Checks all the path whether it has recieved anything or not and if not then foes to the given path */}
       </Routes>
     </>
   );
 };
 
 export default App;
+

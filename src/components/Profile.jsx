@@ -58,26 +58,27 @@ const Profile = () => {
 
   return (
     <div className="ml-10">
-      <h2>Profile</h2>
+      <div className="text-2xl font-bold mb-4 ml-24">All Profiles</div>
       {isLoading && <p>Loading data...</p>}
       {error && <p>Error: {error.message}</p>}
       {alldata.length > 0 && (
         <>
-            {/* {console.log(alldata)} */}
           {alldata.map(
             (item,index) =>
-              item._id === userId && (
-                <div key={index}>
+               (
+                <div className="grid grid-cols-2 text-lg mx-20 mt-2 items-center  py-4" key={index}>
+
+
                   {/* Information  */}
-                  <div>
-                    <div>
-                      Name: {item.firstName} {item.lastName}
+                  <div className="grid grid-cols-2">
+                    <div className="mx-4">
+                      <span className="font-bold">Name</span>: {item.firstName} {item.lastName}
                     </div>
-                    <div>Email: {item.email}</div>
+                    <div><span className="font-bold">Email</span>: {item.email}</div>
                   </div>
 
                   {/* Buttons  */}
-                  <div className="mt-4">
+                  <div className=" flex items-center">
                     <button className="py-1 px-4 bg-green-500 text-white rounded-lg mx-2">
                       Update
                     </button>
@@ -87,6 +88,7 @@ const Profile = () => {
                     >
                       Delete
                     </button>
+
                     <button
                       className="py-1 px-4 bg-blue-500 rounded-lg mx-2"
                       onClick={Logout}

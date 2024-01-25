@@ -1,31 +1,36 @@
 import React, { useState, useEffect, useContext } from "react";
+import { FaUser } from "react-icons/fa";
+import { AuthContext } from "./context/userContext";
 import { useNavigate } from "react-router-dom";
-import UserContext, { AuthContext } from "./context/userContext";
 
 const Profile = () => {
-  const userId = localStorage.getItem("userId");
-  const [alldata, setAlldata] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [viewMore, setViewMore] = useState(false);
-  const navigate = useNavigate();
 
-  const { loggedIn, setLoggedIn } = useContext(AuthContext);
-  // console.log(values)
+  const [allUsers, setAllUsers] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isError, setIsError] = useState(false);
+
+  
+
+  const { setLoggedIn } = useContext(AuthContext);
+
+
+  const baseUrl = 'https://rest-api-bjno.onrender.com'
+
+  const userKoId = localStorage.getItem("userId")
+
+  const navigate = useNavigate()
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setIsLoading(true);
         const response = await fetch(
-          "https://rest-api-bjno.onrender.com/users"
+          `${baseUrl}/id/${userKoId}`
         );
-        if (!response.ok) {
-          throw new Error("API request failed");
-        }
         const data = await response.json();
-        setAlldata(data);
+        setAllUsers(data);
       } catch (error) {
-        setError(error);
+        setIsError(true);
       } finally {
         setIsLoading(false);
       }
@@ -33,19 +38,14 @@ const Profile = () => {
 
     fetchData();
   }, []);
-  const handleViewMore = () => {
-    // navigate('/viewmore')
-    setViewMore(true);
-    // console.log(viewMore);
-  };
 
   const handleDelete = async (id) => {
     try {
-      // console.log(id);
-      await fetch(`https://rest-api-bjno.onrender.com/delete/${id}`, {
+      await fetch(`${baseUrl}/delete/${id}`, {
         method: "DELETE",
       });
       setLoggedIn(false);
+      console.log("User deleted")
       localStorage.removeItem("userId");
       alert("User deleted");
       navigate("/login");
@@ -54,70 +54,25 @@ const Profile = () => {
     }
   };
 
-  const Logout = () => {
-    localStorage.removeItem("userId");
-    navigate("/");
-    setLoggedIn(false);
-  };
 
   return (
-    <div className="ml-10">
-      <div className="text-2xl font-bold mb-4 ml-24">All Profiles</div>
-      {isLoading && <p>Loading data...</p>}
-      {error && <p>Error: {error.message}</p>}
-      {alldata.length > 0 && (
+    <div>
+      <h2>Detailed Information</h2>
+      <FaUser />
+      {!isLoading && (
         <>
-          {alldata.map((item, index) => (
-            <div
-              className="grid grid-cols-2 text-lg mx-20 mt-2 items-center  py-4"
-              key={index}
-            >
-              {/* Information  */}
-              <div className="grid grid-cols-2">
-                <div className="mx-4">
-                  <span className="font-bold">Name</span>: {item.firstName}{" "}
-                  {item.lastName}
-                </div>
-                <div>
-                  <span className="font-bold">Email</span>: {item.email}
-                </div>
-              </div>
-
-              {/* Buttons  */}
-
-              {item._id === userId && !viewMore ? (
-                <button
-                  className=" rounded-md bg-blue-500 mx-40 "
-                  onClick={() => handleViewMore()}
-                >
-                  View More
-                </button>
-              ) : item._id === userId && viewMore ? (
-                <div className=" flex items-center mt-5 ml-20">
-                  <button
-                    className="py-1 px-4 bg-green-500 text-white rounded-lg mx-2"
-                    onClick={() => handleUpdate(item._id)}
-                  >
-                    Update
-                  </button>
-
-                  <button
-                    className="py-1 px-4 bg-red-500 rounded-lg mx-2"
-                    onClick={() => handleDelete(item._id)}
-                  >
-                    Delete
-                  </button>
-
-                  <button
-                    className="py-1 px-4 bg-blue-500 rounded-lg mx-2"
-                    onClick={Logout}
-                  >
-                    Logout
-                  </button>
-                </div>
-              ) : null}
+          <div className="grid grid-cols-2 text-lg mx-20 mt-2 items-center  py-4">
+            <div>
+              Name:
+              {allUsers.firstName} {allUsers.lastName}
             </div>
-          ))}
+            <div>Email: {allUsers.email}</div>
+            {/* buttons  */}
+            <div className="flex mt-4">
+              <button className="mx-4 px-4 py-1 rounded-md bg-green-600" >Update</button>
+              <button className="mx-4 px-4 py-1 rounded-md bg-red-600" onClick={()=>handleDelete()}>Delete</button>
+            </div>
+          </div>
         </>
       )}
     </div>

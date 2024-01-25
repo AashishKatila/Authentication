@@ -1,82 +1,119 @@
 import React, { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import UserContext, { AuthContext } from "./context/userContext";
+import { AuthContext } from "./context/userContext";
+import useFetch from "./custom-hook/useFetch";
 
-const Login = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [userData, setUserData] = useState({});
-  const [errorMessage, setErrorMessage] = useState("");
-
-  const { loggedIn, setLoggedIn } = useContext(AuthContext);
-  // console.log(values)
-
+export default function Login() {
+  // const [data, setData] = useState(null);
+  // const [loading, setLoading] = useState(false);
+  // const [error, setError] = useState(null);
+  
   const navigate = useNavigate();
+  const { setLoggedIn } = useContext(AuthContext);
 
-  const value = localStorage.getItem("userId");
+  const {allUsers,isLoading,isError,fetchData } = useFetch("login","POST")
 
-  const handleLogin = async (e) => {
-    // let user;
-    e.preventDefault();
-    try {
-      const response = await fetch("https://rest-api-bjno.onrender.com/users");
-      const data = await response.json();
-      setUserData(data);
-      for (const user of data) {
-        if (user.email === email && user.password === password) {
-          // console.log(user)
-          localStorage.setItem("userId", user._id);
-          setLoggedIn(true);
-          navigate("/profile")
-          break;
-        }
-        else{
-          setErrorMessage("Invalid email or password")
-        }
-      }
-    } catch (error) {
-      console.error(error);
-    }
+  const [userData, setUserData] = useState({
+    email: "",
+    password: "",
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setUserData((prevData) => ({ ...prevData, [name]: value }));
   };
 
+  const handleLogin = async (e) =>{
+    e.preventDefault()
+    if(userData.email && userData.password){
+      fetchData(userData)
+    }else{
+      console.log("Enter name and pw")
+    }
+  }
+
+  if(isLoading){
+    return<div>Loading....</div>
+  }
+  if(isError){
+    return<div>Error fetching data</div>
+  }
+  if (allUsers){
+    console.log("User Login Success",allUsers)
+    localStorage.setItem("userId",allUsers.data._id)
+    setLoggedIn(true)
+    navigate('/home')
+  }
+
+  // const handleSubmit = (e) => {
+  //   e.preventDefault();
+  //   fetch("https://rest-api-bjno.onrender.com/login", {
+  //     method: "POST",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //     body: JSON.stringify(userData),
+  //   })
+  //     .then((res) => {
+  //       setLoading(true);
+  //       if (!res.ok) {
+  //         throw new Error("Could not fetch data");
+  //       }
+  //       return res.json();
+  //     })
+  //     .then((data) => {
+  //       setData(data);
+  //       console.log("ID added to localStorage", data.data._id);
+  //       localStorage.setItem("userId", data.data._id);
+  //       setLoggedIn(true);
+  //       navigate("/home");
+  //       setLoading(false);
+  //     })
+  //     .catch((err) => {
+  //       setLoading(false);
+  //       setError(err.message || "An error occurred while loading the data");
+  //     });
+
+  //   if (!loading && !error) {
+  //     console.log("User Login successfully!", data);
+  //   } else {
+  //     console.error(
+  //       "Login failed:",
+  //       error || "An error occurred while logging in."
+  //     );
+  //   }
+  // };
+  // if (loading) {
+  //   return <div>Loading...</div>;
+  // }
+
+  // if (error) {
+  //   return <div>Error: {error}</div>;
+  // }
   return (
     <form onSubmit={handleLogin} className="flex flex-col px-20  pt-4 pb-4 ">
-      <label htmlFor="" className="text-xl mr-5 mb-4">
-        Email
-      </label>
+      <label className="text-xl mr-5 mb-4">Email:</label>
       <input
         type="email"
-        placeholder="Email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
+        name="email"
+        value={userData.email}
+        onChange={handleChange}
+        required
         className="text-black px-2"
       />
-      {/* <CustomInput type={'text'} placeholder={'Enter your email'} /> */}
-
       <br />
-      <label htmlFor="" className="text-xl mr-5 mb-4">
-        Password
-      </label>
-      {/* <CustomInput  type={'password'} placeholder={'Enter your password'} /> */}
-
+      <label className="text-xl mr-5 mb-4">Password:</label>
       <input
         type="password"
-        placeholder="Password"
-        value={password}
+        name="password"
+        value={userData.password}
+        onChange={handleChange}
+        required
         className="text-black px-2"
-        onChange={(e) => setPassword(e.target.value)}
       />
-      <br />
 
-      <button
-        type="submit"
-        className="text-xl bg-blue-500 px-4 py-1 text-white rounded-xl mt-2"
-      >
-        Login
-      </button>
-      {errorMessage && <p className="text-red-500 mt-4">{errorMessage}</p>}
+      <br />
+      <button type="submit">Login</button>
     </form>
   );
-};
-
-export default Login;
+}

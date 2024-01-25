@@ -36,27 +36,7 @@ const Home = () => {
 
 
   return (
-//     <div className="ml-10">
-//       <div className="text-2xl font-bold mb-4 ml-24">All Profiles</div>
-//       {isLoading && <p>Loading data...</p>}
 
-//       {/* {!isLoading && allUsers */}
-//       {!isLoading && !isError && allUsers && (
-//         <div>
-//          {allUsers.map((user) => (
-//             <div
-//               key={user._id}
-//               className="grid grid-cols-4 text-lg mx-20 mt-2 items-center  py-4"
-//             >
-//               <div>Name:</div>
-//               <div>
-//                 {user.firstName} {user.lastName}
-//               </div>
-//             </div>
-//           ))}
-//         {/* : null} */}
-//     </div>
-//   )};
 
 <div className="ml-10">
       <div className="text-2xl font-bold mb-4 ml-24">All Profiles</div>

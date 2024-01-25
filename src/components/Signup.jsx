@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useFormik } from "formik";
 import useFetch from "./custom-hook/useFetch";
 import { useNavigate } from "react-router-dom";
+import CustomInput from "./CustomInput";
 
 const validate = (values) => {
   const errors = {};
@@ -28,8 +29,10 @@ const validate = (values) => {
 };
 
 const Signup = () => {
-
-  const { isLoading, isError, allUsers, fetchData } = useFetch("register", "POST");
+  const { isLoading, isError, allUsers, fetchData } = useFetch(
+    "register",
+    "POST"
+  );
 
   const navigate = useNavigate();
   const [registered, setRegistered] = useState(false);
@@ -65,74 +68,53 @@ const Signup = () => {
       onSubmit={formik.handleSubmit}
       className="flex flex-col px-20  pt-4 pb-4  "
     >
-      <label htmlFor="firstName" className="text-xl mr-5 mb-4">
-        First Name:
-      </label>
-
-      <input
+      <CustomInput
+        label="First Name"
         type="text"
         id="firstName"
         name="firstName"
-        className="text-black px-2"
-        {...formik.getFieldProps("firstName")}
+        value={formik.values.firstName}
+        onChange={formik.handleChange}
+        error={formik.touched.firstName && formik.errors.firstName}
       />
-
-      {formik.touched.firstName && formik.errors.firstName && (
-        <div className="error">{formik.errors.firstName}</div>
-      )}
 
       <br />
 
-      <label htmlFor="lastName" className="text-xl mr-5 mb-4">
-        Last Name:
-      </label>
-
-      <input
+      <CustomInput
+        label="Last Name"
         type="text"
         id="lastName"
         name="lastName"
-        className="text-black px-2"
-        {...formik.getFieldProps("lastName")}
+        value={formik.values.lastName}
+        onChange={formik.handleChange}
+        error={formik.touched.lastName && formik.errors.lastName}
       />
-      {formik.touched.lastName && formik.errors.lastName && (
-        <div className="error">{formik.errors.lastName}</div>
-      )}
       <br />
 
-      <label htmlFor="email" className="text-xl mr-5 mb-4">
-        Email:
-      </label>
-
-      <input
+      <CustomInput
+        label="Email"
         type="email"
         id="email"
-        className="text-black px-2"
         name="email"
-        {...formik.getFieldProps("email")}
+        value={formik.values.email}
+        onChange={formik.handleChange}
+        error={formik.touched.email && formik.errors.email}
       />
-      {formik.touched.email && formik.errors.email && (
-        <div className="error">{formik.errors.email}</div>
-      )}
       <br />
 
-      <label htmlFor="password" className="text-xl mr-5 mb-4">
-        Password:
-      </label>
-
-      <input
+      <CustomInput
+        label="Password"
         type="password"
         id="password"
         name="password"
-        className="text-black px-2"
-        {...formik.getFieldProps("password")}
+        value={formik.values.password}
+        onChange={formik.handleChange}
+        error={formik.touched.password && formik.errors.password}
       />
-      {formik.touched.password && formik.errors.password && (
-        <div className="error">{formik.errors.password}</div>
-      )}
       <br />
 
       <button
-        className="text-xl bg-green-600 px-4 py-1 text-white rounded-xl mt-2"
+        className="text-xl bg-green-600 px-4 py-1 text-white rounded-xl "
         type="submit"
         disabled={formik.isSubmitting}
       >

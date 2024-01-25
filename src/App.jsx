@@ -10,7 +10,7 @@ import Profile from "./components/Profile";
 
 const App = () => {
   const { loggedIn } = useContext(AuthContext);
-  // console.log(loggedIn); 
+  // console.log(loggedIn);
 
   return (
     <>
@@ -18,18 +18,13 @@ const App = () => {
       <Routes>
         <Route path="/signup" element={<Signup />} />
         <Route exact path="/login" element={<Login />} />
-        <Route exact path="/home" element={<Home />} />
-        <Route exact path="/profile" element={<Profile />} />
-        {/* {loggedIn && (
-          <Route path="/profile" element={<Profile />} />
-          ) 
-        } */}
-          {/* <Route exact path="*" element={<Navigate to='/login' />} /> */}
-         {/*   '*' Checks all the path whether it has recieved anything or not and if not then foes to the given path */}
+        {loggedIn && <Route exact path="/home" element={<Home />} />}
+        {loggedIn && <Route exact path="/profile" element={<Profile />} />}
+        <Route path="*" element={<Login />} />
+        {/*   '*' Checks all the path whether it has recieved anything or not and if not then goes to the given path */}
       </Routes>
     </>
   );
 };
 
 export default App;
-

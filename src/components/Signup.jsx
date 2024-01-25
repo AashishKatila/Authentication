@@ -28,9 +28,8 @@ const validate = (values) => {
 };
 
 const Signup = () => {
-  const URL = "https://rest-api-bjno.onrender.com/register";
 
-  const { isLoading, isError, allUsers, handleSubmit } = useFetch(URL, "POST");
+  const { isLoading, isError, allUsers, fetchData } = useFetch("register", "POST");
 
   const navigate = useNavigate();
   const [registered, setRegistered] = useState(false);
@@ -45,7 +44,7 @@ const Signup = () => {
     validate,
     onSubmit: async (values) => {
       try {
-        await handleSubmit(values);
+        await fetchData(values);
         if (!isError) {
           setRegistered(true);
           navigate("/login");

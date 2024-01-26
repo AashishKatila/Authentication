@@ -1,14 +1,19 @@
 import React, { useContext, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { AuthContext } from "./context/userContext";
 import useFetch from "./custom-hook/useFetch";
 import CustomInput from "./CustomInput";
 
 export default function Login() {
-  const navigate = useNavigate();
+
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const { setLoggedIn } = useContext(AuthContext);
 
-  const { allUsers, isLoading, isError, fetchData } = useFetch("login", "POST");
+  const navigate = useNavigate();
+
+  // const { allUsers, isLoading, isError, fetchData } = useFetch("login", "POST");
 
   const [userData, setUserData] = useState({
     email: "",
@@ -20,21 +25,39 @@ export default function Login() {
     setUserData((prevData) => ({ ...prevData, [name]: value }));
   };
 
+
   const handleLogin = async (e) => {
     e.preventDefault();
-    if (userData.email && userData.password) {
-      fetchData(userData);
-    } else {
-      console.log("Enter name and pw");
+
+    try {
+      setLoading(true);
+
+      const response = await fetch("https://rest-api-bjno.onrender.com/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(userData),
+      });
+
+      const responseData = await response.json();
+
+      if (response.ok) {
+        setData(responseData);
+        console.log("ID added to localStorage", responseData.data._id);
+        localStorage.setItem("userId", responseData.data._id);
+        setLoggedIn(true);
+        navigate("/home");
+      } else {
+        setError(responseData.message || "An error occurred while loading the data");
+      }
+    } catch (err) {
+      setError("Something went wrong! Please try again later.");
+    } finally {
+      setLoading(false);
     }
   };
 
-  if (allUsers) {
-    console.log("User Login Success", allUsers);
-    localStorage.setItem("userId", allUsers.data._id);
-    setLoggedIn(true);
-    navigate("/home");
-  }
 
   return (
     <form onSubmit={handleLogin} className="flex flex-col px-20 pt-4 pb-4 ">
@@ -64,9 +87,9 @@ export default function Login() {
       >
         Login
       </button>
-      {isLoading && <p>Loading...</p>}
+      {loading && <p>Loading...</p>}
 
-      {isError && <p className="text-red-600">Invalid Username or password</p>}
+      {error && <p className="text-red-600">Invalid Username or password</p>}
     </form>
   );
 }

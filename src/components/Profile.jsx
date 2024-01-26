@@ -3,6 +3,7 @@ import { FaUser } from "react-icons/fa";
 import { AuthContext } from "./context/userContext";
 import { useNavigate } from "react-router-dom";
 import useFetch from "./custom-hook/useFetch";
+import LoadingSpinner from "./LoadingSpinner";
 
 const Profile = () => {
   const { setLoggedIn } = useContext(AuthContext);
@@ -40,6 +41,8 @@ const Profile = () => {
   return (
     <div>
       <div className="text-center text-2xl font-bold">Detailed Information</div>
+
+      {isLoading && <LoadingSpinner />}
 
       {!isLoading && !isError && allUsers ? (
         <>

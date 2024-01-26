@@ -4,14 +4,19 @@ import { AuthContext } from "./context/userContext";
 import useFetch from "./custom-hook/useFetch";
 import CustomInput from "./CustomInput";
 
-export default function Login() {
+import LoadingSpinner from "./LoadingSpinner";
 
+export default function Login() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [isError, setIsError] = useState(false);
   const { setLoggedIn } = useContext(AuthContext);
 
   const navigate = useNavigate();
+
+
+
+
 
   // const { allUsers, isLoading, isError, fetchData } = useFetch("login", "POST");
 
@@ -24,7 +29,6 @@ export default function Login() {
     const { name, value } = e.target;
     setUserData((prevData) => ({ ...prevData, [name]: value }));
   };
-
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -49,15 +53,16 @@ export default function Login() {
         setLoggedIn(true);
         navigate("/home");
       } else {
-        setError(responseData.message || "An error occurred while loading the data");
+        setIsError(
+          responseData.message || "An error occurred while loading the data"
+        );
       }
     } catch (err) {
-      setError("Something went wrong! Please try again later.");
+      setIsError("Something went wrong! Please try again later.");
     } finally {
       setLoading(false);
     }
   };
-
 
   return (
     <form onSubmit={handleLogin} className="flex flex-col px-20 pt-4 pb-4 ">
@@ -87,9 +92,10 @@ export default function Login() {
       >
         Login
       </button>
-      {loading && <p>Loading...</p>}
+      {loading && <LoadingSpinner />}
+      
 
-      {error && <p className="text-red-600">Invalid Username or password</p>}
+      {isError && <p className="text-red-600">Invalid Username or password</p>}
     </form>
   );
 }

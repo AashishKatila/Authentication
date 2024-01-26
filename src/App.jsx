@@ -7,18 +7,17 @@ import "./App.css";
 import Home from "./components/Home";
 import { AuthContext } from "./components/context/userContext";
 import Profile from "./components/Profile";
-import NotFound from "./components/NotFound";
+
 
 const App = () => {
+  
   const { loggedIn } = useContext(AuthContext);
-  // console.log(loggedIn);
 
   return (
     <>
       <Navbar />
       <Routes>
         {!loggedIn && <Route path="/login" element={<Login />} />}
-        <Route path="/signup" element={<Signup />} />
         {loggedIn && <Route exact path="/profile" element={<Profile />} />}
         {loggedIn &&  <Route exact path="/home" element={<Home />} />}
         {!loggedIn &&<Route path="*" element={<Login />} />}

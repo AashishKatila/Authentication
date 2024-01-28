@@ -3,6 +3,7 @@ import { FaUser } from "react-icons/fa";
 import { AuthContext } from "./context/userContext";
 import { useNavigate } from "react-router-dom";
 import useFetch from "./custom-hook/useFetch";
+import { useQuery } from "@tanstack/react-query";
 import LoadingSpinner from "./LoadingSpinner";
 
 const Profile = () => {
@@ -11,14 +12,23 @@ const Profile = () => {
   const baseUrl = "https://rest-api-bjno.onrender.com";
 
   const userKoId = localStorage.getItem("userId");
-  const { allUsers, isLoading, isError, fetchData } = useFetch(
-    `id/${userKoId}`,
-    "GET"
-  );
+  // const { allUsers, isLoading, isError, fetchData } = useFetch(
+  //   `id/${userKoId}`,
+  //   "GET"
+  // );
 
-  useEffect(()=>{
-    fetchData()
-  },[])
+  const { isPending, error, data } = useQuery({
+    queryKey: ["users"],
+    queryFn: () =>
+      fetch(`${baseUrl}/id/${userKoId}`).then((res) =>
+      // {console.log("qyery fn vitra");
+        res.json()
+      ),
+  });
+
+  // useEffect(()=>{
+  //   fetchData()
+  // },[])
 
   const navigate = useNavigate();
 
@@ -42,9 +52,9 @@ const Profile = () => {
     <div>
       <div className="text-center text-2xl font-bold">Detailed Information</div>
 
-      {isLoading && <LoadingSpinner />}
+      {isPending && <LoadingSpinner />}
 
-      {!isLoading && !isError && allUsers ? (
+      {!isPending && !error && data ? (
         <>
           <div className="grid grid-cols-3 text-lg mx-20 mt-2 items-center  py-4">
             {/* {console.log(allUsers)} */}
@@ -55,9 +65,9 @@ const Profile = () => {
               </div>
               <div>
                 Name:
-                {allUsers.firstName} {allUsers.lastName}
+                {data.firstName} {data.lastName}
               </div>
-              <div>Email: {allUsers.email}</div>
+              <div>Email: {data.email}</div>
               {/* buttons  */}
               <div className="flex justify-center mt-10 ">
                 <button className="mx-4 px-4 py-1 rounded-md bg-green-600">

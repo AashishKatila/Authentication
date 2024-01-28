@@ -1,24 +1,34 @@
-import React, { useContext, useState } from "react";
+import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "./context/userContext";
 import useFetch from "./custom-hook/useFetch";
 import CustomInput from "./CustomInput";
-
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import LoadingSpinner from "./LoadingSpinner";
 
 export default function Login() {
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [isError, setIsError] = useState(false);
+
   const { setLoggedIn } = useContext(AuthContext);
+
+  const queryClient = useQueryClient();
+  //is our entry point to interacting with our query cache. It returns the instance of the current QueryClient
+
+  const fetchLogin = async (userData) => {
+    const resp = await fetch("https://rest-api-bjno.onrender.com/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(userData),
+    });
+
+    const data = await response.json();
+    return data;
+  };
 
   const navigate = useNavigate();
 
-
-
-
-
-  // const { allUsers, isLoading, isError, fetchData } = useFetch("login", "POST");
+  const { mutate, isLoading, error } = useMutation(fetchLogin);
 
   const [userData, setUserData] = useState({
     email: "",
@@ -34,7 +44,6 @@ export default function Login() {
     e.preventDefault();
 
     try {
-      setLoading(true);
 
       const response = await fetch("https://rest-api-bjno.onrender.com/login", {
         method: "POST",
@@ -47,20 +56,19 @@ export default function Login() {
       const responseData = await response.json();
 
       if (response.ok) {
-        setData(responseData);
-        console.log("ID added to localStorage", responseData.data._id);
+        // console.log("ID added to localStorage", responseData.data._id);
         localStorage.setItem("userId", responseData.data._id);
         setLoggedIn(true);
         navigate("/home");
       } else {
-        setIsError(
-          responseData.message || "An error occurred while loading the data"
-        );
+        
+        console.log("Error");
       }
     } catch (err) {
-      setIsError("Something went wrong! Please try again later.");
+      console.error("Something went wrong! Please try again later.");
+      console.log(err);
     } finally {
-      setLoading(false);
+      console.log("Try catch ends");
     }
   };
 
@@ -92,10 +100,8 @@ export default function Login() {
       >
         Login
       </button>
-      {loading && <LoadingSpinner />}
-      
 
-      {isError && <p className="text-red-600">Invalid Username or password</p>}
+      {error && <p className="text-red-600">Invalid Username or password</p>}
     </form>
   );
 }

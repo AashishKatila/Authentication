@@ -52,3 +52,19 @@ const useFetch = (url, method) => {
 
 export default useFetch;
 
+
+
+
+
+  // const { isLoading, error, data } = useQuery({
+  //   queryKey: ["users"],
+  //   queryFn: () =>
+  //     fetch(`${baseUrl}/id/${userKoId}`).then((res) =>
+  //     // {console.log("qyery fn vitra");
+  //       res.json()
+  //     ),
+  // });
+
+  // useEffect(()=>{
+  //   fetchData()
+  // },[])

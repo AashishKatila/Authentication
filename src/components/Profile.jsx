@@ -1,41 +1,29 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { FaUser } from "react-icons/fa";
 import { AuthContext } from "./context/userContext";
 import { useNavigate } from "react-router-dom";
-import useFetch from "./custom-hook/useFetch";
-import { useQuery } from "@tanstack/react-query";
 import LoadingSpinner from "./LoadingSpinner";
+import {
+  useQuery,
+} from '@tanstack/react-query'
 
 const Profile = () => {
   const { setLoggedIn } = useContext(AuthContext);
-
-  const baseUrl = "https://rest-api-bjno.onrender.com";
-
   const userKoId = localStorage.getItem("userId");
-  // const { allUsers, isLoading, isError, fetchData } = useFetch(
-  //   `id/${userKoId}`,
-  //   "GET"
-  // );
-
-  const { isPending, error, data } = useQuery({
-    queryKey: ["users"],
-    queryFn: () =>
-      fetch(`${baseUrl}/id/${userKoId}`).then((res) =>
-      // {console.log("qyery fn vitra");
-        res.json()
-      ),
-  });
-
-  // useEffect(()=>{
-  //   fetchData()
-  // },[])
 
   const navigate = useNavigate();
 
+  const { isPending, error, data } = useQuery({
+    queryKey: ['user'],
+    queryFn: () =>
+      fetch(`https://rest-api-bjno.onrender.com/id/${userKoId}`).then((res) =>
+        res.json(),
+      ),
+  })
 
   const handleDelete = async (id) => {
     try {
-      await fetch(`${baseUrl}/delete/${id}`, {
+      await fetch(`https://rest-api-bjno.onrender.com/delete/${id}`, {
         method: "DELETE",
       });
       setLoggedIn(false);
@@ -48,42 +36,36 @@ const Profile = () => {
     }
   };
 
+  if (isPending) return <LoadingSpinner />;
+  if (error) return <p>Error: {error}</p>;
+
   return (
     <div>
       <div className="text-center text-2xl font-bold">Detailed Information</div>
 
-      {isPending && <LoadingSpinner />}
-
-      {!isPending && !error && data ? (
+      <div className="grid grid-cols-3 text-lg mx-20 mt-2 items-center py-4">
         <>
-          <div className="grid grid-cols-3 text-lg mx-20 mt-2 items-center  py-4">
-            {/* {console.log(allUsers)} */}
-
-            <>
-              <div>
-                <FaUser size={50} />
-              </div>
-              <div>
-                Name:
-                {data.firstName} {data.lastName}
-              </div>
-              <div>Email: {data.email}</div>
-              {/* buttons  */}
-              <div className="flex justify-center mt-10 ">
-                <button className="mx-4 px-4 py-1 rounded-md bg-green-600">
-                  Update
-                </button>
-                <button
-                  className="mx-4 px-4 py-1 rounded-md bg-red-600"
-                  onClick={() => handleDelete(userKoId)}
-                >
-                  Delete
-                </button>
-              </div>
-            </>
+          <div>
+            <FaUser size={50} />
+          </div>
+          <div>
+            Name: {data.firstName} {data.lastName}
+          </div>
+          <div>Email: {data.email}</div>
+          {/* buttons  */}
+          <div className="flex justify-center mt-10">
+            <button className="mx-4 px-4 py-1 rounded-md bg-green-600">
+              Update
+            </button>
+            <button
+              className="mx-4 px-4 py-1 rounded-md bg-red-600"
+              onClick={() => handleDelete(userKoId)}
+            >
+              Delete
+            </button>
           </div>
         </>
-      ) : null}
+      </div>
     </div>
   );
 };

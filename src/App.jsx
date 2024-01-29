@@ -18,6 +18,7 @@ const App = () => {
       <Navbar />
       <Routes>
         {!loggedIn && <Route path="/login" element={<Login />} />}
+        {!loggedIn && <Route path="/signup" element={<Signup />} />}
         {loggedIn && <Route exact path="/profile" element={<Profile />} />}
         {loggedIn &&  <Route exact path="/home" element={<Home />} />}
         {!loggedIn &&<Route path="*" element={<Login />} />}

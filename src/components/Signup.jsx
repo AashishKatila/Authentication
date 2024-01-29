@@ -1,81 +1,79 @@
 import React, { useState } from "react";
-import { useFormik } from "formik";
-import useFetch from "./custom-hook/useFetch";
 import { useNavigate } from "react-router-dom";
 import CustomInput from "./CustomInput";
-
-const validate = (values) => {
-  const errors = {};
-
-  if (!values.firstName) {
-    errors.firstName = "Required";
-  } else if (values.firstName.length > 15) {
-    errors.firstName = "Must be 15 characters or less";
-  }
-
-  if (!values.lastName) {
-    errors.lastName = "Required";
-  } else if (values.lastName.length > 20) {
-    errors.lastName = "Must be 20 characters or less";
-  }
-
-  if (!values.email) {
-    errors.email = "Required";
-  } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.email)) {
-    errors.email = "Invalid email address";
-  }
-
-  return errors;
-};
+import { useMutation } from "@tanstack/react-query";
 
 const Signup = () => {
-  const { isLoading, isError, allUsers, fetchData } = useFetch(
-    "register",
-    "POST"
-  );
-
   const navigate = useNavigate();
   const [registered, setRegistered] = useState(false);
-
-  const formik = useFormik({
-    initialValues: {
-      firstName: "",
-      lastName: "",
-      email: "",
-      password: "",
-    },
-    validate,
-    onSubmit: async (values) => {
-      try {
-        await fetchData(values);
-        if (!isError) {
-          setRegistered(true);
-          navigate("/login");
-        } else {
-          console.error(
-            "Registration failed:",
-            errorJson.message || "Registration failed!"
-          );
-        }
-      } catch (error) {
-        console.error("Something went wrong! Please try again later.", error);
-      }
-    },
+  const [userData, setUserData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
   });
 
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setUserData((prevData) => ({ ...prevData, [name]: value }));
+  };
+
+    const mutation = useMutation({
+      mutationFn: async() =>{
+        const response = await fetch("https://rest-api-bjno.onrender.com/register ", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(userData),
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status ${response.status}`);
+      }else{
+        setRegistered(true);
+        navigate("/login");
+      }
+      }
+    })
+  
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    mutation.mutate()
+
+    // try {
+    //   const response = await fetch(
+    //     "https://rest-api-bjno.onrender.com/register",
+    //     {
+    //       method: "POST",
+    //       headers: {
+    //         "Content-Type": "application/json",
+    //       },
+    //       body: JSON.stringify(userData),
+    //     }
+    //   );
+
+    //   if (response.ok) {
+    //     setRegistered(true);
+    //     navigate("/login");
+    //   } else {
+    //     console.log("Error");
+    //   }
+    // } catch (error) {
+    //   console.error("Registration failed:", error);
+    //   // Display user-friendly error message
+    // }
+  };
+
   return (
-    <form
-      onSubmit={formik.handleSubmit}
-      className="flex flex-col px-20  pt-4 pb-4  "
-    >
+    <form onSubmit={handleSubmit} className="flex flex-col px-20 pt-4 pb-4">
       <CustomInput
         label="First Name"
         type="text"
         id="firstName"
         name="firstName"
-        value={formik.values.firstName}
-        onChange={formik.handleChange}
-        error={formik.touched.firstName && formik.errors.firstName}
+        value={userData.firstName}
+        onChange={handleChange}
       />
 
       <br />
@@ -85,9 +83,8 @@ const Signup = () => {
         type="text"
         id="lastName"
         name="lastName"
-        value={formik.values.lastName}
-        onChange={formik.handleChange}
-        error={formik.touched.lastName && formik.errors.lastName}
+        value={userData.lastName}
+        onChange={handleChange}
       />
       <br />
 
@@ -96,9 +93,8 @@ const Signup = () => {
         type="email"
         id="email"
         name="email"
-        value={formik.values.email}
-        onChange={formik.handleChange}
-        error={formik.touched.email && formik.errors.email}
+        value={userData.email}
+        onChange={handleChange}
       />
       <br />
 
@@ -107,23 +103,20 @@ const Signup = () => {
         type="password"
         id="password"
         name="password"
-        value={formik.values.password}
-        onChange={formik.handleChange}
-        error={formik.touched.password && formik.errors.password}
+        value={userData.password}
+        onChange={handleChange}
       />
       <br />
 
       <button
-        className="text-xl bg-green-600 px-4 py-1 text-white rounded-xl "
+        className="text-xl bg-green-600 px-4 py-1 text-white rounded-xl"
         type="submit"
-        disabled={formik.isSubmitting}
       >
-        {formik.isSubmitting ? "Registering..." : "Register"}
+        Register
       </button>
+
       {registered && (
-        <p className="mt-2 text-xl text-green-500">
-          Congrats successfull person
-        </p>
+        <p className="mt-2 text-xl text-green-500">Registration successful!</p>
       )}
     </form>
   );

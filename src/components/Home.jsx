@@ -1,37 +1,29 @@
-import React, { useState, useEffect, useContext } from "react";
-import { useNavigate } from "react-router-dom";
-// import UserContext, { AuthContext } from "./context/userContext";
-// import useFetch from "./custom-hook/useFetch";
+import React, { useState, useEffect } from "react";
 import LoadingSpinner from "./LoadingSpinner";
-import { useQuery } from "@tanstack/react-query";
-import useFetch from "./custom-hook/useFetch";
+import {
+  useQuery,
+} from '@tanstack/react-query'
 
 const Home = () => {
-  // const { isLoading, isError, allUsers, fetchData } = useFetch("users", "GET");
+
+  
 
   const { isPending, error, data } = useQuery({
-    queryKey: ["users"],
+    queryKey: ['allUsers'],
     queryFn: () =>
-      fetch("https://rest-api-bjno.onrender.com/users").then((res) =>
-        res.json()
+      fetch('https://rest-api-bjno.onrender.com/users').then((res) =>
+        res.json(),
       ),
-  });
-
-  // useEffect(() =>{
-  //   fetchData
-  // },[])
+  })
 
   if (isPending) return <LoadingSpinner />;
 
-  if (error) return "An error has occurred: " + error.message;
+  if (error) return <p>Error: {error}</p>;
 
   return (
     <div className="ml-10">
       <div className="text-2xl font-bold mb-4 ml-24">All Profiles</div>
-      {/* {isLoading && <LoadingSpinner />} */}
-      {isPending && <LoadingSpinner />}
 
-      {/* {!isLoading && !isError && allUsers && ( */}
       <div>
         {data.map((user) => (
           <div
@@ -51,8 +43,6 @@ const Home = () => {
           </div>
         ))}
       </div>
-
-      {error && <p>Error loading data</p>}
     </div>
   );
 };

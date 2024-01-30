@@ -6,6 +6,7 @@ import LoadingSpinner from "./LoadingSpinner";
 import {
   useQuery,
 } from '@tanstack/react-query'
+import useFetchData from "./custom-hook/useFetch";
 
 const Profile = () => {
   const { setLoggedIn } = useContext(AuthContext);
@@ -13,13 +14,8 @@ const Profile = () => {
 
   const navigate = useNavigate();
 
-  const { isPending, error, data } = useQuery({
-    queryKey: ['user'],
-    queryFn: () =>
-      fetch(`https://rest-api-bjno.onrender.com/id/${userKoId}`).then((res) =>
-        res.json(),
-      ),
-  })
+
+  const { isPending, error, data } = useFetchData(`id/${userKoId}`)
 
   const handleDelete = async (id) => {
     try {

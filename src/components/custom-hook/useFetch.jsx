@@ -1,26 +1,15 @@
-// Updated useFetch hook
-import { useQuery } from "@tanstack/react-query";
+import { useQuery } from '@tanstack/react-query';
 
-const useFetch = (url, method = "GET") => {
-  const { isLoading, error, data } = useQuery(
-    // Use an object as the first argument
-    { queryKey: [url, method] },
-    {queryFn: async () => {
-      const response = await fetch(`https://rest-api-bjno.onrender.com/${url}`, {
-        method,
-      });
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
-      return response.json();
-    }},
-    {
-      // Disable automatic refetching
-      enabled: false,
-    }
-  );
+const useFetchData = (url) => {
+  const { isPending, error, data } = useQuery({
+    queryKey: [url],
+    queryFn: () =>
+      fetch(`https://rest-api-bjno.onrender.com/${url}`).then((res) =>
+        res.json(),
+      ),
+  });
 
-  return { isLoading, error, data };
+  return { isPending, error, data };
 };
 
-export default useFetch;
+export default useFetchData;

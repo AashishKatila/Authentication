@@ -3,18 +3,19 @@ import LoadingSpinner from "./LoadingSpinner";
 import {
   useQuery,
 } from '@tanstack/react-query'
+import useFetchData from "./custom-hook/useFetch";
 
 const Home = () => {
 
-  
+  // const { isPending, error, data } = useQuery({
+  //   queryKey: ['allUsers'],
+  //   queryFn: () =>
+  //     fetch('https://rest-api-bjno.onrender.com/users').then((res) =>
+  //       res.json(),
+  //     ),
+  // })
 
-  const { isPending, error, data } = useQuery({
-    queryKey: ['allUsers'],
-    queryFn: () =>
-      fetch('https://rest-api-bjno.onrender.com/users').then((res) =>
-        res.json(),
-      ),
-  })
+  const { isPending,error,data} = useFetchData('users')
 
   if (isPending) return <LoadingSpinner />;
 
